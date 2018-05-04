@@ -364,11 +364,10 @@ var LIBRARY_OBJECT = (function() {
         var end = $('#end_pick').val();
         console.log(end)
         var models = [];
-        $('#select_files option:selected').each(function() {
+        $('.chk:checked').each(function() {
              models.push( $( this ).val());
         });
         console.log(models)
-        console.log(geojson_list)
 
         $.ajax({
             type: 'POST',

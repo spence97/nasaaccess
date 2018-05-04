@@ -58,22 +58,22 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td><input type="checkbox" value="GLDASpolyCentroid"></td>
+                        <td><input class="chk" type="checkbox" value="GLDASpolyCentroid"></td>
                         <td>GLDAS Poly Centroid</td>
                         <td>Generate air temperature input files as well as air temperature stations file from NASA GLDAS remote sensing products.</td>
                       </tr>
                       <tr>
-                        <td><input type="checkbox" value="GLDASwat"></td>
+                        <td><input class="chk" type="checkbox" value="GLDASwat"></td>
                         <td>GLDAS SWAT</td>
                         <td>Generate SWAT air temperature input files as well as air temperature stations file from NASA GLDAS remote sensing products.</td>
                       </tr>
                       <tr>
-                        <td><input type="checkbox" value="GPMpolyCentroid"></td>
+                        <td><input class="chk" type="checkbox" value="GPMpolyCentroid"></td>
                         <td>GPM Poly Centroid</td>
                         <td>Generate rainfall input files as well as rain station file from NASA GPM remote sensing products.</td>
                       </tr>
                       <tr>
-                        <td><input type="checkbox" value="GPMswat"></td>
+                        <td><input class="chk" type="checkbox" value="GPMswat"></td>
                         <td>GPM SWAT</td>
                         <td>Generate SWAT rainfall input files as well as rain stations file from NASA GPM remote sensing products.</td>
                       </tr>
@@ -81,7 +81,11 @@
                 </table>
                 <h6><strong>Upload Watershed Shapefile or Specify Extent on map</strong></h6>
                 <p>If no shapefile or extent is specified, the full Lower-Mekong Subregion (shown in the map) will be used as the extent by default.</p>
-                <input type="file" id="shapefile" />
+                <div>
+                    <input type="file" id="shapefile" />
+                    <input type="file" id="DEM" />
+                </div>
+
                 <br>
                 <div id="download_file" class="btn-group download" role="group">
                     <a class="btn btn-success" role="button" id="download">

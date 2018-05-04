@@ -65,5 +65,8 @@ def download_files(request):
     subbasins = request.POST.getlist('subbasins[]')
 
     print(start, end, models, subbasins)
+
+
+
     json_dict = JsonResponse({'startDate': start, 'endDate': end, 'models': models})
     return(json_dict)
