@@ -37,10 +37,31 @@
 {% endblock %}
 
 {% block app_content_override %}
+
     <section>
         <div class="form-container">
-            <form class="form">
-                <h6><strong>Select Dates</strong></h6>
+            <div class="form">
+                <div class="file-select">
+                    <h6><strong>Select Watershed Boundary</strong></h6>
+                    {% gizmo select_watershed %}
+                    <!--<button class="btn btn-primary" id="addShp">Upload New Watershed</button>-->
+                    <div id="addShp" class="btn-group" role="group">
+                      <a class="btn btn-success" role="button" id="addShp-btn">
+                        <span class="glyphicon glyphicon-upload"></span>&nbsp;&nbsp;Upload New Watershed </a>
+                    </div>
+                    <br>
+                    <br>
+                    <h6><strong>Select DEM</strong></h6>
+                    {% gizmo select_dem %}
+                    <!--<button class="btn btn-primary" id="addDem">Upload New DEM</button>-->
+                    <div id="addDem" class="btn-group" role="group">
+                      <a class="btn btn-success" role="button" id="addDem-btn">
+                        <span class="glyphicon glyphicon-upload"></span>&nbsp;&nbsp;Upload New DEM </a>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <h6><strong>Select Date Range</strong></h6>
                 <div class="input-group input-daterange">
                     {% gizmo start_pick %}
                 <div class="input-group-addon">to</div>
@@ -53,7 +74,6 @@
                         <th></th>
                         <th>Dataset</th>
                         <th>Information</th>
-
                       </tr>
                     </thead>
                     <tbody>
@@ -79,25 +99,13 @@
                       </tr>
                     </tbody>
                 </table>
-                <h6><strong>Upload Watershed Shapefile or Specify Extent on map</strong></h6>
-                <p>If no shapefile or extent is specified, the full Lower-Mekong Subregion (shown in the map) will be used as the extent by default.</p>
-                <div>
-                    <input type="file" id="shapefile" />
-                    <input type="file" id="DEM" />
-                </div>
 
                 <br>
-                <div id="download_file" class="btn-group download" role="group">
-                    <a class="btn btn-success" role="button" id="download">
-                        <span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;Download Files </a>
-                </div>
-            </form>
+                <button class="btn btn-primary" id="nasaaccess">RUN NASA ACCESS</button>
+            </div>
         </div>
         <div id="map" class="map"></div>
     </section>
-    <div class="footer">
-        <button id="clear_btn" type="button" class="btn btn-danger">Clear Subbasin Selections</button>
-    </div>
 {% endblock %}
 
 {# Use the after_app_content block for modals #}
@@ -115,6 +123,55 @@
           <p>This application was built to provide a user interface for accessing the nasaaccess R package without needing a local instance of R</p>
           <p>The package assumes that users have already set up a registration account(s) with Earthdata login as well as authorizing NASA GESDISC data access. Please refer <a href='https://disc.gsfc.nasa.gov/registration/registration-for-data-access'>here</a> for further details.</p>
           <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Upload New Shapefile Modal -->
+  <div class="modal fade" id="shp-modal" tabindex="-1" role="dialog" aria-labelledby="shp-modal-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title" id="shp-modal-label">Upload New Shapefile</h5>
+        </div>
+        <div class="modal-body">
+            <form class="form" method="post" enctype="multipart/form-data" action="upload_shp/">
+                {% csrf_token %}
+                {{ shpform }}
+                <!--<input type="file" name="shp_file" accept=".shp,.shx,.dbf, .prj" multiple>-->
+                <br>
+                <input class="btn btn-success" type="submit" value="Upload new Shapefile">
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Upload New Shapefile Modal -->
+  <div class="modal fade" id="dem-modal" tabindex="-1" role="dialog" aria-labelledby="dem-modal-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title" id="dem-modal-label">Upload New DEM file</h5>
+        </div>
+        <div class="modal-body">
+            <form class="form" method = "post" enctype="multipart/form-data" action="upload_dem/">
+                {% csrf_token %}
+                {{ demform }}
+                <!--<input type="file" name="dem_file">-->
+                <br>
+                <input type="submit" value="Upload New DEM .tif File">
+            </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

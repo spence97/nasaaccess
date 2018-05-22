@@ -1,7 +1,7 @@
 from tethys_sdk.base import TethysAppBase, url_map_maker
 
 
-class Nasaaccess(TethysAppBase):
+class nasaaccess(TethysAppBase):
     """
     Tethys app class for NASA Access.
     """
@@ -26,13 +26,23 @@ class Nasaaccess(TethysAppBase):
         url_maps = (
             UrlMap(
                 name='home',
-                url='nasaaccess',
+                url='nasaaccess/',
                 controller='nasaaccess.controllers.home'
             ),
             UrlMap(
                 name='download_files',
-                url='nasaaccess/download',
-                controller='nasaaccess.controllers.download_files'
+                url='nasaaccess/run',
+                controller='nasaaccess.controllers.run_nasaaccess'
+            ),
+            UrlMap(
+                name='upload_shapefiles',
+                url='nasaaccess/upload_shp',
+                controller='nasaaccess.controllers.upload_shapefiles'
+            ),
+            UrlMap(
+                name='upload_tiffiles',
+                url='nasaaccess/upload_dem',
+                controller='nasaaccess.controllers.upload_tiffiles'
             )
         )
 
