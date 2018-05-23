@@ -1,5 +1,5 @@
 /*****************************************************************************
- * FILE:    SWAT Viewer MAIN JS
+ * FILE:    nasaaccess MAIN JS
  * DATE:    3/28/18
  * AUTHOR: Spencer McDonald
  * COPYRIGHT:
