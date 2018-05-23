@@ -7,6 +7,7 @@ from shutil import copyfile
 from .forms import UploadShpForm, UploadDEMForm
 from .upload_file import upload_shapefile
 from .app import nasaaccess as app
+from .config import temp_workspace
 
 def home(request):
     """
@@ -122,7 +123,7 @@ def upload_shapefiles(request):
         id = request.FILES['shapefile'].name.split('.')[0] # Get name of the watershed from the shapefile name
         project_directory = os.path.dirname(__file__)
         app_workspace = os.path.join(project_directory, 'workspaces', 'app_workspace')
-        temp_file_path = os.path.join('/Users/Student/Documents/tethys_temp_files', 'nasaaccess','shapefiles', id + '.zip')
+        temp_file_path = os.path.join(temp_workspace,'shapefiles', id + '.zip')
         perm_file_path = os.path.join(app_workspace, 'spatial_files', 'shapefiles', id + '.zip')
         if form.is_valid():
             if os.path.isfile(perm_file_path):
@@ -144,17 +145,14 @@ def upload_tiffiles(request):
     Controller to upload new DEM files
     """
 
-    app_workspace = app.get_app_workspace()
-    temp_file_path = os.path.join('/Users/Student/Documents/tethys_temp_files', 'nasaaccess')
-    dem_path = os.path.join(app_workspace, 'spatial_files', 'DEMs')
 
     if request.method == 'POST':
         form = UploadDEMForm(request.POST, request.FILES)
         id = request.FILES['DEMfile'].name
         print(id)
         app_workspace = app.get_app_workspace()
-        temp_file_path = os.path.join('/Users/Student/Documents/tethys_temp_files', 'nasaaccess', id)
-        perm_file_path = os.path.join(app_workspace, 'spatial_files', 'DEMs', id)
+        temp_file_path = os.path.join(temp_workspace,'DEMfiles', id)
+        perm_file_path = os.path.join(app_workspace.path, 'spatial_files', 'DEMs', id)
         if form.is_valid():
             form.save()
             copyfile(temp_file_path, perm_file_path)

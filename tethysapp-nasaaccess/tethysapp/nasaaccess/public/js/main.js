@@ -24,6 +24,7 @@ var LIBRARY_OBJECT = (function() {
         public_interface,			// Object returned by the module
         variable_data,
         wms_workspace,
+        geoserver_url = 'http://216.218.240.206:8080/geoserver/wms',
         wms_url,
         wms_layer,
         wms_source,
@@ -199,7 +200,7 @@ var LIBRARY_OBJECT = (function() {
             var srs
 
 
-            var wms_url = "http://localhost:8080/geoserver/wms?service=WMS&version=1.1.1&request=GetCapabilities&"
+            var wms_url = geoserver_url + "?service=WMS&version=1.1.1&request=GetCapabilities&"
             $.ajax({
                 type: "GET",
                 url: wms_url,
@@ -261,7 +262,7 @@ var LIBRARY_OBJECT = (function() {
             </StyledLayerDescriptor>';
 //      Identify the wms source url, workspace, and datastore
         wms_source = new ol.source.ImageWMS({
-            url: 'http://localhost:8080/geoserver/wms',
+            url: geoserver_url,
             params: {'LAYERS':'nasaaccess:' + layer,'SLD_BODY':sld_string},
             serverType: 'geoserver',
             crossOrigin: 'Anonymous',
