@@ -2,8 +2,8 @@ from django.db import models
 
 # Model for the Upload Shapefiles form
 class Shapefiles(models.Model):
-    shapefile = models.FileField(upload_to='nasaaccess/shapefiles/')
+    shapefile = models.FileField(upload_to='nasaaccess_data/shapefiles')
 
 # Model for the Upload DEM files form
 class DEMfiles(models.Model):
-    DEMfile = models.FileField(upload_to='nasaaccess/DEMfiles/')
+    DEMfile = models.FileField(upload_to='nasaaccess_data/DEMfiles/')

@@ -3,11 +3,9 @@ from django.shortcuts import render
 from tethys_sdk.gizmos import *
 from django.http import JsonResponse, HttpResponseRedirect
 import datetime
-from shutil import copyfile
 from .forms import UploadShpForm, UploadDEMForm
 from .upload_file import upload_shapefile
-from .app import nasaaccess as app
-from .config import temp_workspace
+from .config import data_path
 
 def home(request):
     """
@@ -15,9 +13,8 @@ def home(request):
     """
 
     # Get available Shapefiles and DEM files from app workspace and use them as options in drop down menus
-    app_workspace = app.get_app_workspace()
-    shapefile_path = os.path.join(app_workspace.path, 'spatial_files', 'shapefiles')
-    dem_path = os.path.join(app_workspace.path, 'spatial_files', 'DEMs')
+    shapefile_path = os.path.join(data_path, 'shapefiles')
+    dem_path = os.path.join(data_path, 'DEMfiles')
 
     shp_options = []
     shp_files = os.listdir(shapefile_path)
@@ -121,19 +118,14 @@ def upload_shapefiles(request):
     if request.method == 'POST':
         form = UploadShpForm(request.POST, request.FILES)
         id = request.FILES['shapefile'].name.split('.')[0] # Get name of the watershed from the shapefile name
-        project_directory = os.path.dirname(__file__)
-        app_workspace = os.path.join(project_directory, 'workspaces', 'app_workspace')
-        temp_file_path = os.path.join(temp_workspace,'shapefiles', id + '.zip')
-        perm_file_path = os.path.join(app_workspace, 'spatial_files', 'shapefiles', id + '.zip')
+        perm_file_path = os.path.join(data_path, 'shapefiles')
         if form.is_valid():
             if os.path.isfile(perm_file_path):
                 print('file already exists')
                 upload_shapefile(id)
             else:
                 print('saving shapefile to server')
-                form.save() # Save the shapefile to the temp file path
-                copyfile(temp_file_path, perm_file_path) # Copy the file from temp path to permanent file path in app workspace
-                os.remove(temp_file_path) # Delete temporary file
+                form.save() # Save the shapefile to the nasaaccess data file path
                 upload_shapefile(id) # Run upload_shapefile function to upload file to the geoserver
             return HttpResponseRedirect('../') # Return to Home page
     else:
@@ -148,15 +140,8 @@ def upload_tiffiles(request):
 
     if request.method == 'POST':
         form = UploadDEMForm(request.POST, request.FILES)
-        id = request.FILES['DEMfile'].name
-        print(id)
-        app_workspace = app.get_app_workspace()
-        temp_file_path = os.path.join(temp_workspace,'DEMfiles', id)
-        perm_file_path = os.path.join(app_workspace.path, 'spatial_files', 'DEMs', id)
         if form.is_valid():
             form.save()
-            copyfile(temp_file_path, perm_file_path)
-            os.remove(temp_file_path)
             return HttpResponseRedirect('../')
     else:
         return HttpResponseRedirect('../')

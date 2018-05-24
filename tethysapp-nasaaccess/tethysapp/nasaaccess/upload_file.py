@@ -1,5 +1,6 @@
 from tethys_sdk.services import get_spatial_dataset_engine
 import os
+from .config import data_path
 
 WORKSPACE = 'nasaaccess'
 GEOSERVER_URI = 'http://www.example.com/nasaaccess'
@@ -22,9 +23,7 @@ def upload_shapefile(id):
                 geoserver_engine.create_workspace(workspace_id=WORKSPACE, uri=GEOSERVER_URI)
 
         #Create a string with the path to the zip archive
-        project_directory = os.path.dirname(__file__)
-        app_workspace = os.path.join(project_directory, 'workspaces', 'app_workspace')
-        zip_archive = os.path.join(app_workspace, 'spatial_files', 'shapefiles', id + '.zip')
+        zip_archive = os.path.join(data_path, 'shapefiles', id + '.zip')
 
         # Upload shapefile to the workspaces
         store = id
