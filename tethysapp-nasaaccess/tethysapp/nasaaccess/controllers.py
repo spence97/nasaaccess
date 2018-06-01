@@ -8,6 +8,7 @@ from .forms import UploadShpForm, UploadDEMForm
 from .upload_file import upload_shapefile
 from .app import nasaaccess as app
 from .config import temp_workspace
+from .nasaaccess_r import gldaspoly
 
 def home(request):
     """
@@ -108,6 +109,7 @@ def run_nasaaccess(request):
     dem = request.POST.get('dem')
     json_dict = JsonResponse({'startDate': start, 'endDate': end, 'models': models, 'Watershed': watershed, 'DEM': dem})
     print(json_dict)
+    gldaspoly(watershed, dem, start, end)
     return json_dict
 
 

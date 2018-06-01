@@ -294,7 +294,7 @@ var LIBRARY_OBJECT = (function() {
         });
         var watershed = $('#select_watershed').val();
         var dem = $('#select_dem').val();
-        console.log(start,end,models,watershed_shp,dem)
+        console.log(start,end,models,watershed,dem)
         $.ajax({
             type: 'POST',
             url: "/apps/nasaaccess/run/",
