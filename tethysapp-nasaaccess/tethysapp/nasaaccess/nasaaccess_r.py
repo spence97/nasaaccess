@@ -1,4 +1,4 @@
-import rpy2.interactive as r
+# import rpy2.interactive as r
 import os
 from .app import nasaaccess as app
 
