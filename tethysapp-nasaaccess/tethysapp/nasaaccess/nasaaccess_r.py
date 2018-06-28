@@ -3,10 +3,10 @@ import os
 from .app import nasaaccess as app
 
 app_workspace = app.get_app_workspace()
-shapefiles_path = os.path.join(app_workspace.path, 'spatial_files', 'shapefiles')
+shapefile_path = os.path.join(app_workspace.path, 'spatial_files', 'shapefiles')
 DEMs_path = os.path.join(app_workspace.path, 'spatial_files', 'DEMs')
 
-def gldaspoly(watershed, dem, start, end):
+def gpmswat(watershed, dem, start, end):
     watershed_path = os.path.join(shapefile_path, watershed + '.zip')
     print(watershed_path)
     dem_path = os.path.join(DEMs_path, dem + '.tif')

@@ -247,8 +247,8 @@ var LIBRARY_OBJECT = (function() {
             <Title>Watersheds</Title>\
             <Abstract></Abstract>\
             <Fill>\
-              <CssParameter name="fill">#ccd5e8</CssParameter>\
-              <CssParameter name="fill-opacity">0</CssParameter>\
+              <CssParameter name="fill">#ffffff</CssParameter>\
+              <CssParameter name="fill-opacity">.5</CssParameter>\
             </Fill>\
             <Stroke>\
               <CssParameter name="stroke">#ffffff</CssParameter>\

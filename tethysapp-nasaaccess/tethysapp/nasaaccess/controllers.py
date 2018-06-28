@@ -3,12 +3,13 @@ from django.shortcuts import render
 from tethys_sdk.gizmos import *
 from django.http import JsonResponse, HttpResponseRedirect
 import datetime
-from shutil import copyfile
+import zipfile
+import shutil
 from .forms import UploadShpForm, UploadDEMForm
 from .upload_file import upload_shapefile
 from .app import nasaaccess as app
-from .config import temp_workspace
-from .nasaaccess_r import gldaspoly
+from .config import temp_workspace, data_path
+from .nasaaccess_r import gpmswat
 
 def home(request):
     """
@@ -16,9 +17,8 @@ def home(request):
     """
 
     # Get available Shapefiles and DEM files from app workspace and use them as options in drop down menus
-    app_workspace = app.get_app_workspace()
-    shapefile_path = os.path.join(app_workspace.path, 'spatial_files', 'shapefiles')
-    dem_path = os.path.join(app_workspace.path, 'spatial_files', 'DEMs')
+    shapefile_path = os.path.join(data_path, 'shapefiles')
+    dem_path = os.path.join(data_path, 'DEMfiles')
 
     shp_options = []
     shp_files = os.listdir(shapefile_path)
@@ -109,7 +109,7 @@ def run_nasaaccess(request):
     dem = request.POST.get('dem')
     json_dict = JsonResponse({'startDate': start, 'endDate': end, 'models': models, 'Watershed': watershed, 'DEM': dem})
     print(json_dict)
-    gldaspoly(watershed, dem, start, end)
+    gpmswat(watershed, dem, start, end)
     return json_dict
 
 
@@ -123,20 +123,34 @@ def upload_shapefiles(request):
     if request.method == 'POST':
         form = UploadShpForm(request.POST, request.FILES)
         id = request.FILES['shapefile'].name.split('.')[0] # Get name of the watershed from the shapefile name
-        project_directory = os.path.dirname(__file__)
-        app_workspace = os.path.join(project_directory, 'workspaces', 'app_workspace')
-        temp_file_path = os.path.join(temp_workspace,'shapefiles', id + '.zip')
-        perm_file_path = os.path.join(app_workspace, 'spatial_files', 'shapefiles', id + '.zip')
+        zip_path = os.path.join(data_path, 'shapefiles', id + '.zip')
+        print(zip_path)
+        new_dir = data_path + '/shapefiles/' + id
+        print(new_dir)
+        os.mkdir(new_dir)
+        shapefile_path = os.path.join(new_dir)
         if form.is_valid():
-            if os.path.isfile(perm_file_path):
+            if os.path.isfile(shapefile_path):
                 print('file already exists')
                 upload_shapefile(id)
             else:
                 print('saving shapefile to server')
                 form.save() # Save the shapefile to the temp file path
-                copyfile(temp_file_path, perm_file_path) # Copy the file from temp path to permanent file path in app workspace
-                os.remove(temp_file_path) # Delete temporary file
-                upload_shapefile(id) # Run upload_shapefile function to upload file to the geoserver
+                zip_ref = zipfile.ZipFile(zip_path, 'r')
+                print(zip_ref)
+                zip_ref.extractall(shapefile_path)
+                zip_ref.close()
+                prj_path = os.path.join(shapefile_path, id + '.prj')
+                with open(prj_path) as f:
+                    for line in f:
+                        print(line)
+                        if 'PROJCS[' in line:
+                            print('Please project this file into the WGS 1984 Geographic Coordinate System before uploading your watershed')
+                            shutil.rmtree(shapefile_path)
+                            os.remove(zip_path)
+                            return HttpResponseRedirect('../') # Return to Home page
+                        else:
+                            upload_shapefile(id) # Run upload_shapefile function to upload file to the geoserver
             return HttpResponseRedirect('../') # Return to Home page
     else:
         return HttpResponseRedirect('../') # Return to Home page
@@ -152,13 +166,12 @@ def upload_tiffiles(request):
         form = UploadDEMForm(request.POST, request.FILES)
         id = request.FILES['DEMfile'].name
         print(id)
-        app_workspace = app.get_app_workspace()
-        temp_file_path = os.path.join(temp_workspace,'DEMfiles', id)
-        perm_file_path = os.path.join(app_workspace.path, 'spatial_files', 'DEMs', id)
+        # temp_file_path = os.path.join(temp_workspace,'DEMfiles', id)
+        # DEM_path = os.path.join(data_path, 'DEMfiles', id)
         if form.is_valid():
             form.save()
-            copyfile(temp_file_path, perm_file_path)
-            os.remove(temp_file_path)
+            # copyfile(temp_file_path, perm_file_path)
+            # os.remove(temp_file_path)
             return HttpResponseRedirect('../')
     else:
         return HttpResponseRedirect('../')
