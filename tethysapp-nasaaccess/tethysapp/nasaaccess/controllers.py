@@ -6,6 +6,7 @@ import datetime
 from .forms import UploadShpForm, UploadDEMForm
 from .upload_file import upload_shapefile
 from .config import data_path
+from nasaaccess_r import nasaaccess_run
 
 def home(request):
     """
@@ -103,9 +104,8 @@ def run_nasaaccess(request):
     models = request.POST.getlist('models[]')
     watershed = request.POST.get('watershed')
     dem = request.POST.get('dem')
-    json_dict = JsonResponse({'startDate': start, 'endDate': end, 'models': models, 'Watershed': watershed, 'DEM': dem})
-    print(json_dict)
-    return json_dict
+    nasaaccess_run(models, watershed, dem, start, end)
+    return HttpResponseRedirect('../')
 
 
 

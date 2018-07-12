@@ -182,61 +182,49 @@ var LIBRARY_OBJECT = (function() {
 
     add_basins = function(){
 //      Get the selected value from the select watershed drop down
-        var layer = ($('#select_watershed').val()).split('.')[0];
-//      Set the view based on the layer extent
-        if (layer === 'lower_mekong') {
-            var view = new ol.View({
-                center: [104.5, 17.5],
-                projection: 'EPSG:4326',
-                zoom: 6.5
-            });
-
-            map.setView(view)
-
-        } else {
-            var layerParams
-            var layer_xml
-            var bbox
-            var srs
-
-
-            var wms_url = geoserver_url + "?service=WMS&version=1.1.1&request=GetCapabilities&"
-            $.ajax({
-                type: "GET",
-                url: wms_url,
-                dataType: 'xml',
-                success: function (xml) {
+        var layer = $('#select_watershed').val();
+        var layerParams
+        var layer_xml
+        var bbox
+        var srs
+        var wms_url = geoserver_url + "?service=WMS&version=1.1.1&request=GetCapabilities&"
+        $.ajax({
+            type: "GET",
+            url: wms_url,
+            dataType: 'xml',
+            success: function (xml) {
 //                  Get the projection and extent of the selected layer from the wms capabilities xml file
-                    var layers = xml.getElementsByTagName("Layer");
-                    var parser = new ol.format.WMSCapabilities();
-                    var result = parser.read(xml);
-                    var layers = result['Capability']['Layer']['Layer']
-                    for (var i=0; i<layers.length; i++) {
-                        if(layers[i].Title == layer) {
-                            layer_xml = xml.getElementsByTagName('Layer')[i+1]
-                            console.log(layer_xml)
-                            layerParams = layers[i]
-                        }
+                var layers = xml.getElementsByTagName("Layer");
+                var parser = new ol.format.WMSCapabilities();
+                var result = parser.read(xml);
+                var layers = result['Capability']['Layer']['Layer']
+                for (var i=0; i<layers.length; i++) {
+                    if(layers[i].Title == layer) {
+                        layer_xml = xml.getElementsByTagName('Layer')[i+1]
+                        console.log(layer_xml)
+                        layerParams = layers[i]
                     }
-                    srs = layer_xml.getElementsByTagName('SRS')[0].innerHTML
-                    bbox = layerParams.BoundingBox[0].extent
-                    console.log(srs, bbox)
-                    var new_extent = ol.proj.transformExtent(bbox, srs, 'EPSG:4326');
-                    var center = ol.extent.getCenter(new_extent)
-                    console.log(center)
-//                  Create a new view using the extent of the new selected layer
-                    var view = new ol.View({
-                        center: center,
-                        projection: 'EPSG:4326',
-                        extent: new_extent,
-                        zoom: 6
-                    });
-//                  Move the map to center on the selected watershed
-                    map.setView(view)
-                    map.getView().fit(new_extent, map.getSize());
                 }
-            });
-        }
+                srs = layer_xml.getElementsByTagName('SRS')[0].innerHTML
+                bbox = layerParams.BoundingBox[0].extent
+                console.log(srs, bbox)
+                var new_extent = ol.proj.transformExtent(bbox, srs, 'EPSG:4326');
+                console.log(new_extent)
+                var center = ol.extent.getCenter(new_extent)
+                console.log(center)
+//                  Create a new view using the extent of the new selected layer
+                var view = new ol.View({
+                    center: center,
+                    projection: 'EPSG:4326',
+                    extent: new_extent,
+                    zoom: 6
+                });
+//                  Move the map to center on the selected watershed
+                map.setView(view)
+                map.getView().fit(new_extent, map.getSize());
+            }
+        });
+
 
 
 
@@ -294,7 +282,6 @@ var LIBRARY_OBJECT = (function() {
         });
         var watershed = $('#select_watershed').val();
         var dem = $('#select_dem').val();
-        console.log(start,end,models,watershed_shp,dem)
         $.ajax({
             type: 'POST',
             url: "/apps/nasaaccess/run/",
@@ -330,7 +317,7 @@ var LIBRARY_OBJECT = (function() {
         init_all();
 
         $('#nasaaccess').click(function() {
-            console.log('NASA ACCESS!!!!')
+            console.log('NASAACCESS!!!!')
             nasaaccess();
         });
 
