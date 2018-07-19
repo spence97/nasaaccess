@@ -11,7 +11,7 @@ utils = importr('utils')
 utils.chooseCRANmirror(ind=1) # select the first mirror in the list
 
 # R package names
-packnames = ('rgdal', 'raster', 'utils', 'methods')
+packnames = ('methods', 'sp', 'rgdal', 'raster', 'rgeos', 'XML', 'stringr', 'ncdf4', 'curl', 'RCurl')
 
 # R vector of strings
 from rpy2.robjects.vectors import StrVector

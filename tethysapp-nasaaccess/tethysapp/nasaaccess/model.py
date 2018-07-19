@@ -7,3 +7,8 @@ class Shapefiles(models.Model):
 # Model for the Upload DEM files form
 class DEMfiles(models.Model):
     DEMfile = models.FileField(upload_to='nasaaccess_data/DEMfiles/')
+
+# Model for data access form
+class accessCode(models.Model):
+    access_code = models.CharField(max_length=6)
+

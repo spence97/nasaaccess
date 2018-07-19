@@ -43,6 +43,11 @@ class nasaaccess(TethysAppBase):
                 name='upload_tiffiles',
                 url='nasaaccess/upload_dem',
                 controller='nasaaccess.controllers.upload_tiffiles'
+            ),
+            UrlMap(
+                name='download',
+                url='nasaaccess/download',
+                controller='nasaaccess.controllers.download_data'
             )
         )
 

@@ -1,12 +1,14 @@
-import os
+import os, datetime, shutil, tempfile, zipfile, StringIO, sys
 from django.shortcuts import render
 from tethys_sdk.gizmos import *
-from django.http import JsonResponse, HttpResponseRedirect
-import datetime
-from .forms import UploadShpForm, UploadDEMForm
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.core.files import File
+from wsgiref.util import FileWrapper
+from .forms import UploadShpForm, UploadDEMForm, accessCodeForm
 from .upload_file import upload_shapefile
 from .config import data_path
 from nasaaccess_r import nasaaccess_run
+
 
 def home(request):
     """
@@ -32,6 +34,7 @@ def home(request):
 
     shpform = UploadShpForm()
     demform = UploadDEMForm()
+    accesscodeform = accessCodeForm()
 
 
     # Set date picker options
@@ -87,6 +90,7 @@ def home(request):
         'end_pick': end_pick,
         'shpform': shpform,
         'demform': demform,
+        'accesscodeform': accesscodeform,
         'select_watershed': select_watershed,
         'select_dem': select_dem
     }
@@ -100,11 +104,17 @@ def run_nasaaccess(request):
     """
     # Get selected parameters and pass them into nasaccess R scripts
     start = request.POST.get('startDate')
+    d_start = str(datetime.datetime.strptime(start, '%b %d, %Y').strftime('%Y-%m-%d'))
+    print(d_start)
     end = request.POST.get(str('endDate'))
+    d_end = str(datetime.datetime.strptime(end, '%b %d, %Y').strftime('%Y-%m-%d'))
+    print(d_end)
     models = request.POST.getlist('models[]')
     watershed = request.POST.get('watershed')
     dem = request.POST.get('dem')
-    nasaaccess_run(models, watershed, dem, start, end)
+    email = request.POST.get('email')
+    print(email)
+    nasaaccess_run(email, models, watershed, dem, d_start, d_end)
     return HttpResponseRedirect('../')
 
 
@@ -145,3 +155,34 @@ def upload_tiffiles(request):
             return HttpResponseRedirect('../')
     else:
         return HttpResponseRedirect('../')
+
+
+def download_data(request):
+    """
+    Controller to download data using a unique 6-digit access code emailed to the user when their data is ready
+    """
+    if request.method == 'POST':
+        access_code = request.POST['access_code']
+        print(access_code)
+
+        unique_path = os.path.join(data_path, 'outputs', access_code, 'nasaaccess_data')
+
+        def zipfolder(foldername, target_dir):
+            zipobj = zipfile.ZipFile(foldername + '.zip', 'w', zipfile.ZIP_DEFLATED)
+            rootlen = len(target_dir) + 1
+            for base, dirs, files in os.walk(target_dir):
+                for file in files:
+                    fn = os.path.join(base, file)
+                    zipobj.write(fn, fn[rootlen:])
+
+        zipfolder(unique_path, unique_path)
+
+        path_to_file = os.path.join(data_path, 'outputs', access_code, 'nasaaccess_data.zip')
+        f = open(path_to_file, 'r')
+        myfile = File(f)
+
+        response = HttpResponse(myfile, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=nasaaccess_data.zip'
+        return response
+
+

@@ -44,6 +44,7 @@ var LIBRARY_OBJECT = (function() {
         init_all,
         init_map,
         nasaaccess,
+        validateQuery,
         clear_selection,
         getCookie;
 
@@ -282,6 +283,7 @@ var LIBRARY_OBJECT = (function() {
         });
         var watershed = $('#select_watershed').val();
         var dem = $('#select_dem').val();
+        var email = $('#id_email').val();
         $.ajax({
             type: 'POST',
             url: "/apps/nasaaccess/run/",
@@ -290,11 +292,29 @@ var LIBRARY_OBJECT = (function() {
                 'endDate': end,
                 'models': models,
                 'watershed': watershed,
-                'dem': dem
+                'dem': dem,
+                'email': email
             },
         }).done(function() {
-
+            console.log('NASAaccess functions are running')
         });
+    }
+
+    validateQuery = function() {
+        var watershed = $('#select_watershed').val()
+        var dem = $('#select_dem').val()
+        var start = $('#start_pick').val()
+        var end = $('#end_pick').val()
+        var models = [];
+        $('.chk:checked').each(function() {
+             models.push( $( this ).val());
+        });
+        console.log(watershed, dem, start, end, models)
+        if (watershed === undefined || dem === undefined || start === undefined || end === undefined || models.length == 0) {
+            alert('Please be sure you have selected a watershed, DEM, start and end dates, and at least 1 function')
+        } else {
+            $("#cont-modal").modal('show');
+        }
     }
 
 
@@ -317,9 +337,23 @@ var LIBRARY_OBJECT = (function() {
         init_all();
 
         $('#nasaaccess').click(function() {
-            console.log('NASAACCESS!!!!')
-            nasaaccess();
+            validateQuery();
+
         });
+
+        $('#submit_form').click(function() {
+            $("#cont-modal").modal('hide');
+            nasaaccess()
+        });
+
+        $('#download_data').click(function() {
+            $("#download-modal").modal('show');
+        });
+
+//        $('#submit-download').click(function() {
+//            dataDownload();
+//            $("#download-modal").modal('hide');
+//        });
 
         $('#select_watershed').change(function() {
             map.removeLayer(basin_layer);
@@ -346,124 +380,3 @@ var LIBRARY_OBJECT = (function() {
 
 
 }());// End of package wrapper
-
-//        map.on("singleclick",function(evt){
-//
-//
-//            if (map.getTargetElement().style.cursor == "pointer") {
-//
-//                var clickCoord = evt.coordinate;
-//                var view = map.getView();
-//                var viewResolution = view.getResolution();
-//
-//                var wms_url = current_layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, view.getProjection(), {'INFO_FORMAT': 'application/json'}); //Get the wms url for the clicked point
-//                if (wms_url) {
-//                    //Retrieving the details for clicked point via the url
-//                    $.ajax({
-//                        type: "GET",
-//                        url: wms_url,
-//                        dataType: 'json',
-//                        success: function (result) {
-//                            console.log(result)
-//                           var streamID = parseFloat(result["features"][0]["properties"]["Subbasin"]);
-//                           var subbasinVectorSource = new ol.source.Vector({
-//                                format: new ol.format.GeoJSON(),
-//                                url: 'http://localhost:8080/geoserver/wms/ows?service=wfs&version=2.0.0&request=getfeature&typename=swat_mekong:subbasin&CQL_FILTER=Subbasin='+streamID+'&outputFormat=application/json&srsname=EPSG:4326&,EPSG:4326',
-//                                strategy: ol.loadingstrategy.bbox
-//                           });
-//
-//
-//                           var color = '#0dd8c0';
-//                           color = ol.color.asArray(color);
-//                           color = color.slice();
-//                           color[3] = 0.5;
-//                           featureOverlaySubbasin = new ol.layer.Vector({
-//                                source: subbasinVectorSource,
-//                                style: new ol.style.Style({
-//                                    stroke: new ol.style.Stroke({
-//                                        color: '#000000',
-//                                        width: 1
-//                                    }),
-//                                    fill: new ol.style.Fill({
-//                                        color: color
-//                                    })
-//                                }),
-//                                title: 'subbasin_overlay'
-//                           });
-//
-//                           map.addLayer(featureOverlaySubbasin);
-////                           map.addLayer(featureOverlayStream);
-//                        },
-//                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-//                            console.log(Error);
-//                        }
-//                    }).done(function(value) {
-//
-//                    });
-//                }
-//            }
-//
-//        });
-//
-//        map.on('pointermove', function(evt) {
-//            if (evt.dragging) {
-//                return;
-//            }
-//            var pixel = map.getEventPixel(evt.originalEvent);
-//            var hit = map.forEachLayerAtPixel(pixel, function(layer) {
-//                if (layer != layers[0]&& layer != layers[1]){
-//                    current_layer = layer;
-//                    return true;}
-//            });
-//            map.getTargetElement().style.cursor = hit ? 'pointer' : '';
-//        });
-
-
-//                           var streamVectorSource = new ol.source.Vector({
-//                                format: new ol.format.GeoJSON(),
-//                                url: 'http://localhost:8080/geoserver/wms/ows?service=wfs&version=2.0.0&request=getfeature&typename=swat_mekong:reach&CQL_FILTER=Subbasin='+streamID+'&outputFormat=application/json&srsname=EPSG:4326&,EPSG:4326',
-//                                strategy: ol.loadingstrategy.bbox
-//                           });
-//
-//                           featureOverlayStream = new ol.layer.Vector({
-//                                source: streamVectorSource,
-//                                style: new ol.style.Style({
-//                                    stroke: new ol.style.Stroke({
-//                                        color: '#1500ff',
-//                                        width: 4
-//                                    })
-//                                }),
-//                                title: 'stream_overlay'
-//                           });
-
-
-//    add_streams = function(){
-//    var sld_string = '<StyledLayerDescriptor version="1.0.0"><NamedLayer><Name>swat_mekong:reach</Name><UserStyle><FeatureTypeStyle><Rule>\
-//        <Name>rule1</Name>\
-//        <Title>Blue Line</Title>\
-//        <Abstract>A solid blue line with a 2 pixel width</Abstract>\
-//        <LineSymbolizer>\
-//            <Stroke>\
-//                <CssParameter name="stroke">#418ff4</CssParameter>\
-//                <CssParameter name="stroke-width">2</CssParameter>\
-//            </Stroke>\
-//        </LineSymbolizer>\
-//        </Rule>\
-//        </FeatureTypeStyle>\
-//        </UserStyle>\
-//        </NamedLayer>\
-//        </StyledLayerDescriptor>';
-//
-//
-//
-//    wms_source = new ol.source.ImageWMS({
-//        url: 'http://localhost:8080/geoserver/wms',
-//        params: {'LAYERS':'swat_mekong:reach','SLD_BODY':sld_string},
-//        serverType: 'geoserver',
-//        crossOrigin: 'Anonymous'
-//    });
-//
-//    streams_layer = new ol.layer.Image({
-//        source: wms_source,
-//        title: 'streams'
-//    });

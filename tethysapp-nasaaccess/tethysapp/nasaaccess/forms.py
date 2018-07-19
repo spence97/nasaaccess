@@ -1,5 +1,7 @@
 from django.forms import ModelForm
-from .model import Shapefiles, DEMfiles
+from django import forms
+from .model import Shapefiles, DEMfiles, accessCode
+
 
 
 class UploadShpForm(ModelForm):
@@ -12,3 +14,7 @@ class UploadDEMForm(ModelForm):
         model = DEMfiles
         fields = ('DEMfile',)
 
+class accessCodeForm(ModelForm):
+    class Meta:
+        model = accessCode
+        fields = ('access_code',)

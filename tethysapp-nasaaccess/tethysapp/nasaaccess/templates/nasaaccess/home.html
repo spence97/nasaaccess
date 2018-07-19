@@ -101,7 +101,8 @@
                 </table>
 
                 <br>
-                <button class="btn btn-primary" id="nasaaccess">RUN NASA ACCESS</button>
+                <button class="btn btn-primary" id="nasaaccess">Run NASAaccess</button>
+                <button class="btn btn-success" id="download_data">Download Data</button>
             </div>
         </div>
         <div id="map" class="map"></div>
@@ -127,6 +128,55 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Download Data Modal -->
+  <div class="modal fade" id="download-modal" tabindex="-1" role="dialog" aria-labelledby="download-modal-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title" id="download-modal-label">Download Data</h5>
+        </div>
+        <div class="modal-body">
+            <p>If you have previously run the NASAaccess function, you should have received at 6-digit access code.</p>
+            <p>Please input your access code below and click the "Download" button to download the files from your NASAaccess query.</p>
+            <form class="form" method="post" enctype="multipart/form-data" action="download/">
+                {% csrf_token %}
+                {{ accesscodeform }}
+                <br>
+                <br>
+                <input class="btn btn-success" type="submit" value="Download">
+            </form>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Contact Information Modal -->
+  <div class="modal fade" id="cont-modal" tabindex="-1" role="dialog" aria-labelledby="cont-modal-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title" id="cont-modal-label">Contact Information</h5>
+        </div>
+        <div class="modal-body">
+            <p>Depending on the watershed size and the date range you selected, the nasaaccess process may take some time.  Please provide your email here and we will contact you with a 6 digit access code for downloading your data when the process is complete.</p>
+            <label for="id_email">Email Address:</label>
+            <input id="id_email" type="email" placeholder="Email" size="30" required<input>
+            <p>Your email will only remain in our database until your access code has been sent out.  The access code you receive will then be valid for 3 days.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="submit_form">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
