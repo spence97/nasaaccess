@@ -16,7 +16,7 @@ def nasaaccess_run(email, models, watershed, dem, start, end):
     tempdir = os.path.join(temp_path, unique_id)
     os.makedirs(tempdir, 0777)
    
-    os.chdir(tempdir)
+    os.chdir(tempdir, 0o777)
 
     for model in models:
         if model == 'GPMpolyCentroid':
