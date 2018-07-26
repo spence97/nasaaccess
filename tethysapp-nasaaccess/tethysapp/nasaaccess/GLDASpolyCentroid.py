@@ -2,8 +2,9 @@ import rpy2.robjects as robjects
 
 GLDASpolyCentroid = robjects.r('''
 
-GLDASpolyCentroid=function(Dir, watershed, DEM, start, end)
+GLDASpolyCentroid=function(tempdir, Dir, watershed, DEM, start, end)
 {
+  setwd(tempdir)
   library(raster)
   library(rgdal)
   library(rgeos)

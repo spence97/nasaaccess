@@ -15,6 +15,8 @@ def nasaaccess_run(email, models, watershed, dem, start, end):
     os.makedirs(unique_path, 0777)
     tempdir = os.path.join(temp_path, unique_id)
     os.makedirs(tempdir, 0777)
+    cwd = os.getcwd()
+    print(cwd)
    
     os.chdir(tempdir)
 
@@ -33,7 +35,7 @@ def nasaaccess_run(email, models, watershed, dem, start, end):
             output_path = unique_path + '/GLDASpolyCentroid/'
             os.makedirs(output_path, 0777)
             print('running GLDASpoly')
-            GLDASpolyCentroid(output_path, shp_path, dem_path, start, end)
+            GLDASpolyCentroid(tempdir, output_path, shp_path, dem_path, start, end)
         elif model == 'GLDASwat':
             output_path = unique_path + '/GLDASwat/'
             os.makedirs(output_path, 0777)
